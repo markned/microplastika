@@ -1,10 +1,22 @@
 #!/usr/bin/env python3
 """Rebuild site/index.html with PDF overlay spans inlined."""
+import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+LAYOUT_DEFAULT = ROOT / "assets" / "layout-default.json"
 RAW = ROOT / "assets" / "pdf-overlays-raw.html"
 OUT = ROOT / "index.html"
+
+# PDF page numbers whose overlay blocks are inlined into index sections (see split_pages).
+PAGE_IDS = [1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13]
+
+
+def read_layout_json_compact() -> str:
+    if not LAYOUT_DEFAULT.is_file():
+        return "{}"
+    obj = json.loads(LAYOUT_DEFAULT.read_text(encoding="utf-8"))
+    return json.dumps(obj, ensure_ascii=False, separators=(",", ":"))
 
 
 def split_pages(text: str) -> dict[int, str]:
@@ -30,7 +42,7 @@ def split_pages(text: str) -> dict[int, str]:
 
 def main():
     pages = split_pages(RAW.read_text())
-    p = {k: pages.get(k, "") for k in [1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13]}
+    p = {k: pages.get(k, "") for k in PAGE_IDS}
 
     main_html = f'''  <main>
     <!-- Page 1 -->
@@ -182,7 +194,7 @@ def main():
     </section>
 
     <!-- Page 13 -->
-    <section class="slide slide--closing" id="closing" aria-label="MICROPLASTIKA 2026">
+    <section class="slide slide--closing" id="closing" aria-label="Closing">
       <div class="pdf-page" style="--pw: 4912; --ph: 3484">
         <div class="pdf-page__split">
           <img class="pdf-page__photo pdf-page__photo--half" src="assets/img/p13-a.jpg" alt="" width="1066" height="1600" loading="lazy" decoding="async" />
@@ -203,9 +215,8 @@ def main():
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>MICROPLASTIKA — Lave Mason</title>
   <meta name="description" content="Microplastika: an exploration of the human in the digital environment. Works by Lave Mason." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Syne:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/fonts.css" />
   <link rel="stylesheet" href="assets/styles.css" />
 </head>
 <body>
@@ -222,11 +233,17 @@ def main():
 
 '''
 
-    foot = '''  <footer class="site-footer">
+    layout_json = read_layout_json_compact()
+
+    foot = f'''  <footer class="site-footer">
     <p class="site-footer__sig">Lave Mason</p>
     <p>Microplastika</p>
   </footer>
-  <script src="assets/layout-editor.js" defer></script>
+  <script src="assets/layout-core.js"></script>
+  <script>window.__MICROPLASTIKA_LAYOUT__ = {layout_json};</script>
+  <script src="assets/layout-apply.js" defer></script>
+  <!-- Layout editor: load layout-core.js, then uncomment layout-editor.js; optional: comment out layout-apply if editor alone. -->
+  <!-- <script src="assets/layout-editor.js" defer></script> -->
 </body>
 </html>
 '''

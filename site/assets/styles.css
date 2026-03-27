@@ -452,13 +452,82 @@ img {
   }
 }
 
-/* —— Редактор положения картинок (layout-editor.js) —— */
+/* —— Обёртки для layout-editor (transform на span, не на img) —— */
+.layout-asset {
+  display: block;
+  box-sizing: border-box;
+  transform-origin: center center;
+}
+
+.layout-asset--fill {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.layout-asset--fill > img {
+  pointer-events: auto;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.layout-asset--gridcell {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  line-height: 0;
+}
+
+.layout-asset--gridcell > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.layout-asset--jealousy {
+  width: 100%;
+  max-width: 100%;
+  line-height: 0;
+}
+
+.layout-asset--jealousy > img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.layout-asset--flow {
+  width: 100%;
+  max-width: 100%;
+  line-height: 0;
+}
+
+.layout-asset--flow > img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* —— Редактор трансформаций (layout-editor.js) —— */
+.layout-asset--selected {
+  outline: 2px solid rgba(201, 169, 98, 0.85) !important;
+  outline-offset: 3px;
+  z-index: 60 !important;
+}
+
 .layout-editor-panel {
   position: fixed;
   right: var(--pad);
   bottom: var(--pad);
   z-index: 1000;
-  max-width: 20rem;
+  max-width: min(22rem, calc(100vw - 2rem));
+  max-height: min(88vh, 900px);
+  overflow-y: auto;
   padding: 0.85rem 1rem;
   background: rgba(12, 14, 20, 0.92);
   border: 1px solid var(--line);
@@ -472,6 +541,53 @@ img {
   font-size: 0.72rem;
   line-height: 1.45;
   color: var(--muted);
+}
+
+.layout-editor-panel__sub {
+  margin: 0 0 0.5rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.layout-editor-panel__transform {
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.layout-editor-field {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  gap: 0.2rem 0.35rem;
+  align-items: center;
+  margin-bottom: 0.45rem;
+  font-size: 0.65rem;
+  color: var(--muted);
+}
+
+.layout-editor-field__label {
+  grid-column: 1 / -1;
+}
+
+.layout-editor-field input[type="range"] {
+  grid-column: 1;
+  width: 100%;
+  min-width: 0;
+  accent-color: var(--accent);
+}
+
+.layout-editor-field .layout-editor-num {
+  grid-column: 2;
+  width: 3.25rem;
+  padding: 0.2rem 0.35rem;
+  font-size: 0.68rem;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--bg);
+  color: var(--text);
 }
 
 .layout-editor-panel__actions {
@@ -508,16 +624,23 @@ img {
   background: rgba(201, 169, 98, 0.2);
 }
 
-body.layout-edit-mode main img[src*="assets/img"] {
+body.layout-edit-mode main .layout-asset {
   cursor: grab;
   touch-action: none;
   outline: 1px dashed rgba(201, 169, 98, 0.45);
   outline-offset: 2px;
-  position: relative;
   z-index: 5;
 }
 
-body.layout-edit-mode main img[src*="assets/img"].layout-dragging {
+body.layout-edit-mode main .layout-asset:not(.layout-asset--fill) {
+  position: relative;
+}
+
+body.layout-edit-mode main .layout-asset--fill {
+  z-index: 4;
+}
+
+body.layout-edit-mode main .layout-asset.layout-dragging {
   cursor: grabbing;
   z-index: 50;
 }
