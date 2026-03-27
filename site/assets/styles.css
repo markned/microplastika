@@ -1,0 +1,534 @@
+:root {
+  --bg: #08090c;
+  --bg-elevated: #0e1016;
+  --text: #e8eaef;
+  --muted: #8b92a3;
+  --accent: #c9a962;
+  --line: rgba(255, 255, 255, 0.08);
+  --max: 72rem;
+  --pad: clamp(1rem, 4vw, 2rem);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: "Syne", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.55;
+  font-size: clamp(0.95rem, 1.5vw, 1.05rem);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Nav */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem var(--pad);
+  background: rgba(8, 9, 12, 0.88);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+
+.nav__brand {
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  font-size: 0.72rem;
+  color: var(--text);
+}
+
+.nav__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem 1.25rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.nav__links a {
+  color: var(--muted);
+}
+
+.nav__links a:hover {
+  color: var(--text);
+  text-decoration: none;
+}
+
+/* Slides */
+.slide {
+  position: relative;
+  border-bottom: 1px solid var(--line);
+  scroll-margin-top: 3rem;
+}
+
+/* —— PDF canvas (coordinates from pdftotext -bbox) —— */
+.pdf-page {
+  --pw: 4912;
+  --ph: 3484;
+  position: relative;
+  width: 100%;
+  max-width: 96rem;
+  margin: 0 auto;
+  aspect-ratio: var(--pw) / var(--ph);
+  container-type: size;
+  overflow: hidden;
+  background: #000;
+}
+
+.pdf-page__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.pdf-page__split {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  z-index: 0;
+}
+
+.pdf-page__photo--half {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pdf-page__triple {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  z-index: 0;
+}
+
+.pdf-page__triple img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pdf-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.pdf-word {
+  position: absolute;
+  left: calc(var(--x) / var(--pw, 4912) * 100%);
+  top: calc(var(--y) / var(--ph, 3484) * 100%);
+  width: calc(var(--w) / var(--pw, 4912) * 100%);
+  height: calc(var(--h) / var(--ph, 3484) * 100%);
+  font-size: clamp(0.42rem, calc(var(--h) / var(--ph, 3484) * 68cqh), 3.4rem);
+  line-height: 0.92;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  color: rgba(248, 248, 252, 0.98);
+  text-shadow:
+    0 0 0.12em rgba(0, 0, 0, 0.95),
+    0 0.04em 0.18em rgba(0, 0, 0, 0.88);
+  font-family: "Instrument Serif", Georgia, serif;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.pdf-word--vertical {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  justify-content: center;
+  align-items: center;
+  white-space: normal;
+}
+
+.pdf-layer--cover .pdf-word {
+  font-family: "Syne", sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.pdf-layer--modern .pdf-word {
+  font-family: "Syne", sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.pdf-layer--closing .pdf-word {
+  font-family: "Syne", sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+/* Cover */
+.pdf-page--cover {
+  max-width: min(100%, 96rem);
+}
+
+.slide--cover {
+  padding: clamp(1.5rem, 4vw, 2.5rem) var(--pad);
+}
+
+/* Golden grid + triptych */
+.slide__inner--flush {
+  max-width: 96rem;
+  margin: 0 auto;
+  padding: clamp(1.5rem, 3vw, 2rem) var(--pad);
+}
+
+.golden-grid {
+  --pw: 4912;
+  --ph: 3484;
+  position: relative;
+  display: grid;
+  grid-template-areas: "strip";
+  grid-template-rows: 1fr;
+  aspect-ratio: 4912 / 3484;
+  width: 100%;
+}
+
+.golden-grid__strip {
+  grid-area: strip;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  align-items: start;
+  min-height: 0;
+}
+
+.golden-grid__cell {
+  margin: 0;
+  border: 1px solid var(--line);
+  background: #000;
+  overflow: hidden;
+}
+
+.golden-grid__cell img {
+  width: 100%;
+  height: auto;
+  vertical-align: middle;
+}
+
+.pdf-layer--grid {
+  grid-area: strip;
+  z-index: 3;
+}
+
+@media (max-width: 768px) {
+  .golden-grid {
+    aspect-ratio: auto;
+  }
+
+  .golden-grid__strip {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Jealousy: две картины друг под другом слева */
+.pdf-page__jealousy-arts {
+  position: absolute;
+  left: 2%;
+  top: 5%;
+  width: min(44%, 28rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  z-index: 0;
+  align-items: stretch;
+}
+
+.pdf-page--jealousy .pdf-page__art {
+  position: relative;
+  left: auto;
+  top: auto;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  border: 1px solid var(--line);
+  background: #000;
+}
+
+.pdf-page--jealousy .pdf-page__art--inset {
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 900px) {
+  .pdf-page__jealousy-arts {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 100%;
+    max-width: 22rem;
+    margin: 0 auto 1rem;
+  }
+}
+
+/* Manifesto: фон + анимация + текст поверх */
+.slide--manifesto {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(2rem, 5vw, 3.5rem) var(--pad);
+}
+
+.slide--manifesto__bg {
+  position: absolute;
+  inset: 0;
+  background-color: #050508;
+  background-image: url("img/p02-bg.jpg");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  will-change: transform, filter, opacity;
+  animation: mp-bg-glitch 3.2s ease-in-out infinite;
+}
+
+.slide--manifesto__bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(8, 9, 12, 0.75) 0%,
+    rgba(8, 9, 12, 0.5) 40%,
+    rgba(8, 9, 12, 0.82) 100%
+  );
+  pointer-events: none;
+}
+
+.manifesto {
+  position: relative;
+  z-index: 1;
+  max-width: 38rem;
+  width: 100%;
+}
+
+.manifesto__title {
+  margin: 0 0 1.25rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.manifesto__text {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: clamp(1.05rem, 2.2vw, 1.28rem);
+  line-height: 1.78;
+  color: #e4e6ee;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.65);
+}
+
+.manifesto__text p {
+  margin: 0 0 1rem;
+}
+
+.manifesto__text p:last-child {
+  margin-bottom: 0;
+}
+
+@keyframes mp-bg-glitch {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+    filter: brightness(1) contrast(1);
+    opacity: 1;
+  }
+  8% {
+    transform: translate(-4px, 2px) rotate(-0.18deg) scale(1.003);
+    filter: brightness(1.08) contrast(1.03);
+    opacity: 0.91;
+  }
+  18% {
+    transform: translate(3px, -2px) rotate(0.14deg) scale(0.998);
+    filter: brightness(0.88) contrast(1.06);
+    opacity: 1;
+  }
+  31% {
+    transform: translate(-2px, -3px) rotate(0.1deg);
+    filter: brightness(1.05) saturate(1.05);
+    opacity: 0.86;
+  }
+  44% {
+    transform: translate(2px, 1px) rotate(-0.08deg);
+    filter: brightness(0.96);
+    opacity: 1;
+  }
+  57% {
+    transform: translate(-1px, 0) rotate(0.06deg);
+    filter: brightness(1.06);
+    opacity: 0.92;
+  }
+  71% {
+    transform: translate(1px, -2px) rotate(-0.05deg);
+    filter: brightness(1);
+    opacity: 1;
+  }
+  85% {
+    transform: translate(-2px, 1px) rotate(0.04deg);
+    filter: brightness(0.94) contrast(1.02);
+    opacity: 0.88;
+  }
+}
+
+/* Closing slide spacing */
+.slide--closing {
+  padding-bottom: 2rem;
+}
+
+.site-footer {
+  padding: 2rem var(--pad) 3rem;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.82rem;
+  border-top: 1px solid var(--line);
+}
+
+.site-footer__sig {
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  color: var(--text);
+  margin-bottom: 0.35rem;
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .slide--manifesto__bg {
+    animation: none;
+  }
+}
+
+/* —— Редактор положения картинок (layout-editor.js) —— */
+.layout-editor-panel {
+  position: fixed;
+  right: var(--pad);
+  bottom: var(--pad);
+  z-index: 1000;
+  max-width: 20rem;
+  padding: 0.85rem 1rem;
+  background: rgba(12, 14, 20, 0.92);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(10px);
+}
+
+.layout-editor-panel__hint {
+  margin: 0 0 0.65rem;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.layout-editor-panel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.layout-editor-panel__btn {
+  font-family: inherit;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--bg-elevated);
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.layout-editor-panel__btn:hover {
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.layout-editor-panel__btn--primary {
+  background: rgba(201, 169, 98, 0.12);
+  border-color: rgba(201, 169, 98, 0.35);
+  color: var(--accent);
+}
+
+.layout-editor-panel__btn--primary:hover {
+  background: rgba(201, 169, 98, 0.2);
+}
+
+body.layout-edit-mode main img[src*="assets/img"] {
+  cursor: grab;
+  touch-action: none;
+  outline: 1px dashed rgba(201, 169, 98, 0.45);
+  outline-offset: 2px;
+  position: relative;
+  z-index: 5;
+}
+
+body.layout-edit-mode main img[src*="assets/img"].layout-dragging {
+  cursor: grabbing;
+  z-index: 50;
+}
+
+body.layout-edit-mode .slide,
+body.layout-edit-mode .pdf-page,
+body.layout-edit-mode .golden-grid,
+body.layout-edit-mode .golden-grid__strip,
+body.layout-edit-mode .pdf-page__split,
+body.layout-edit-mode .pdf-page__triple,
+body.layout-edit-mode .pdf-page__jealousy-arts,
+body.layout-edit-mode figure {
+  overflow: visible !important;
+}
