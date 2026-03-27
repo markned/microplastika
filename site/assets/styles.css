@@ -173,9 +173,10 @@ img {
   align-items: center;
   justify-content: flex-start;
   color: rgba(248, 248, 252, 0.98);
+  /* Offset-only shadows: no 0 0 blur (avoids darkening the glyphs themselves). */
   text-shadow:
-    0 0 0.12em rgba(0, 0, 0, 0.95),
-    0 0.04em 0.18em rgba(0, 0, 0, 0.88);
+    0.02em 0.07em 0.2em rgba(0, 0, 0, 0.82),
+    0 0.11em 0.38em rgba(0, 0, 0, 0.55);
   font-family: "Instrument Serif", Georgia, serif;
   font-weight: 400;
   white-space: nowrap;
@@ -193,6 +194,10 @@ img {
   font-family: "Syne", sans-serif;
   font-weight: 700;
   letter-spacing: 0.06em;
+}
+
+.pdf-layer--cover .pdf-word--cover-mason {
+  transform: translateX(15px);
 }
 
 .pdf-layer--modern .pdf-word {
@@ -369,7 +374,9 @@ img {
   font-size: clamp(1.05rem, 2.2vw, 1.28rem);
   line-height: 1.78;
   color: #e4e6ee;
-  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.65);
+  text-shadow:
+    0 2px 5px rgba(0, 0, 0, 0.45),
+    0 5px 14px rgba(0, 0, 0, 0.38);
 }
 
 .manifesto__text p {
